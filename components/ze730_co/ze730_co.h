@@ -1,7 +1,7 @@
-#include \"esphome/core/component.h\"
-#include \"esphome/components/sensor/sensor.h\"
-#include \"esphome/components/binary_sensor/binary_sensor.h\"
-#include \"esphome/components/uart/uart.h\"
+#include "esphome/core/component.h"
+#include "esphome/components/sensor/sensor.h"
+#include "esphome/components/binary_sensor/binary_sensor.h"
+#include "esphome/components/uart/uart.h"
 
 namespace esphome {
 namespace ze730_co {
