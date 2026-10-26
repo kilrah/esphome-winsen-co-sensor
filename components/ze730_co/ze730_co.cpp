@@ -20,7 +20,7 @@ void ZE730COSensor::setup() {
   }
 
   if (this->qa_mode_enabled_) {
-    ESP_LOGCONFIG(TAG, "ZE730-CO in Q&A mode (update_interval: %us)", this->update_interval_ / 1000);
+    ESP_LOGCONFIG(TAG, "ZE730-CO in Q&A mode (update_interval: %lus)", this->update_interval_ / 1000);
   } else {
     ESP_LOGCONFIG(TAG, "ZE730-CO in Initiative mode (real-time data)");
   }
@@ -111,7 +111,7 @@ void ZE730COSensor::parse_data_(const uint8_t *data) {
   
   if (data[1] == CMD_RESPONSE) {
     // Q&A mode response
-    decimals = 1;
+    decimals = 0;
     high_byte = data[2];
     low_byte = data[3];
     ESP_LOGV(TAG, "Q&A response: %02X %02X %02X %02X %02X %02X %02X %02X %02X",
@@ -148,7 +148,7 @@ void ZE730COSensor::parse_data_(const uint8_t *data) {
   this->last_transmission_ = millis();
 }
 
-float ZE730COSensor::calculate_concentration_(uint8_t high_byte, uint8_t low_byte) {
+float ZE730COSensor::calculate_concentration_(uint8_t high_byte, uint8_t low_byte, uint8_t decimals) {
   // Gas concentration = (Low 5 bits of High Byte * 256 + Low Byte) * 0.1
   uint16_t raw_value = ((high_byte & 0x1F) << 8) | low_byte;
   if(decimals == 0)
@@ -158,7 +158,7 @@ float ZE730COSensor::calculate_concentration_(uint8_t high_byte, uint8_t low_byt
   else if(decimals == 1)
     return raw_value * 0.01f;
   else
-    ESP_LOGW("Unknown decimals value: %d",decimals);
+    ESP_LOGW(TAG, "Unknown decimals value: %d", decimals);
 }
 
 bool ZE730COSensor::extract_sensor_fault_(uint8_t high_byte) {
@@ -192,7 +192,7 @@ void ZE730COSensor::send_command_(const uint8_t *command, uint8_t length) {
 void ZE730COSensor::dump_config() {
   ESP_LOGCONFIG(TAG, "ZE730-CO Carbon Monoxide Sensor:");
   if (this->qa_mode_enabled_) {
-    ESP_LOGCONFIG(TAG, "  Mode: Q&A (update_interval: %us)", this->update_interval_ / 1000);
+    ESP_LOGCONFIG(TAG, "  Mode: Q&A (update_interval: %lus)", this->update_interval_ / 1000);
   } else {
     ESP_LOGCONFIG(TAG, "  Mode: Initiative (real-time)");
   }

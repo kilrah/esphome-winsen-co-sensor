@@ -47,7 +47,7 @@ class ZE730COSensor : public Component, public uart::UARTDevice {
   bool validate_checksum_(const uint8_t *data);
   void parse_data_(const uint8_t *data);
   void send_command_(const uint8_t *command, uint8_t length);
-  float calculate_concentration_(uint8_t high_byte, uint8_t low_byte);
+  float calculate_concentration_(uint8_t high_byte, uint8_t low_byte, uint8_t decimals);
   bool extract_sensor_fault_(uint8_t high_byte);
 };
 
